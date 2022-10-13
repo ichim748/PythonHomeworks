@@ -8,6 +8,6 @@ def gcd(a, b):
 if __name__ == '__main__':
     arr = [int(i) for i in input().split()]
     current_gcd = gcd(arr[0], arr[1])
-    for i in range(2, len(arr) - 1):
+    for i in range(2, len(arr)):
         current_gcd = gcd(current_gcd, arr[i])
     print('The current GCD is: ' + str(current_gcd))

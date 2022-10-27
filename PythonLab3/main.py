@@ -25,11 +25,7 @@ def ex2(a:string):
 
 
 def ex3(a, b):
-    differences1 = [i for i in a if i not in b]
-    differences2 = [i for i in b if i not in a]
-    if len(differences1) > 0 or len(differences2) > 0:
-        return False
-    return True
+    return a.__eq__(b)
 
 
 def ex4(tag, content, **name_parameters):
@@ -118,12 +114,13 @@ def ex9(*args, **kwargs):
 
 
 if __name__ == '__main__':
-    print(ex9(1, 2, 3, 4, x=1, y=2, z=3, w=5))
+    #print(ex9(1, 2, 3, 4, x=1, y=2, z=3, w=5))
     #print(ex8(({'start': 'a', 'b': 'a', 'a': '6', '6': 'z', 'x': '2', 'z': '2', '2': '2', 'y': 'start'})))
     #print(ex7({1, 2}, {2, 3}, {1, 4}))
     #print(ex6([1, 2, 3, 4, 5, 6, 7, 7]))
     #print(ex5({("key1", "", "inside", "")}, {"key1": "come inside, it's too cold out"}))
     #print(ex4("a", "Hello there", href =" http://python.org ", _class =" my-link ", id= " someid ") )
-    #print(ex3({1:'donkey', 2:'chicken', 3:'dog'}, {1:'donkey', 2:'chimpansee', 4:'chicken'}))
+    print(ex3({1: 'donkey', 2: 'chicken', 3: {1: 'ceva', 2: 'altceva'}}, {1: 'donkey', 2: 'chicken', 3: 'dog'}))
+    print(ex3({1: 'donkey', 2: 'chicken', 3: {1: 'ceva', 2: 'altceva'}}, {1: 'donkey', 2: 'chicken', 3: {1: 'ceva', 2: 'altceva'}}))
     #print(ex2('ala bala portocala'))
     #print(ex1([1, 2, 3], [3, 2, 4]))

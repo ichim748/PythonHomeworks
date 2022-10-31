@@ -1,0 +1,10 @@
+C:\Users\Cosmin\PycharmProjects\PythonLab4\ceva.txt
+C:\Users\Cosmin\PycharmProjects\PythonLab4\main.py
+C:\Users\Cosmin\PycharmProjects\PythonLab4\outputLab4.txt
+C:\Users\Cosmin\PycharmProjects\PythonLab4\.idea\.gitignore
+C:\Users\Cosmin\PycharmProjects\PythonLab4\.idea\misc.xml
+C:\Users\Cosmin\PycharmProjects\PythonLab4\.idea\modules.xml
+C:\Users\Cosmin\PycharmProjects\PythonLab4\.idea\PythonLab4.iml
+C:\Users\Cosmin\PycharmProjects\PythonLab4\.idea\workspace.xml
+C:\Users\Cosmin\PycharmProjects\PythonLab4\.idea\inspectionProfiles\profiles_settings.xml
+C:\Users\Cosmin\PycharmProjects\PythonLab4\.idea\inspectionProfiles\Project_Default.xml

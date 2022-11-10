@@ -148,7 +148,7 @@ def ex8c(function, decorators):
     def temp(*args):
         output = function(*args)
         for i in decorators:
-            output = i(function)
+            output = i(function)(*args)
         return output
     return temp
 

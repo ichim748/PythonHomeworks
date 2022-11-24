@@ -1,10 +1,10 @@
 import os
 import re
-from xml.etree.ElementTree import XML
+import xml.etree.ElementTree as XML
 
 
 def ex1(text):
-    return re.split('\s', text)
+    return [i for i in re.split('[^a-zA-Z1-9]', text) if i != '']
 
 
 def ex2(regex_string, text_string, x):
@@ -16,28 +16,26 @@ def ex3(string, regular_expressions):
 
 
 def ex4(path, attrs):
-    f = open(path, 'r')
-    elem = XML(str(f.readlines()))
+    tree = XML.parse(path)
     output = []
-    for node in elem:
+    for node in tree.iter():
         buba = False
-        for i in attrs.keys():
-            if node.attrib[i] != attrs[i] or i not in node.attrib:
+        for i in node.attrib:
+            if not attrs.keys().__contains__(i) or (attrs.keys().__contains__(i) and node.attrib[i] != attrs[i] or i not in node.attrib):
                 buba = True
                 break
-        if not buba:
-            output.append(node.text)
-    return output
+        if not buba and node != tree.getroot():
+            output.append(node.tag)
+    return list(set(output))
 
 
 def ex5(path, attrs):
-    f = open(path, 'r')
-    elem = XML(str(f.readlines()))
+    tree = XML.parse(path)
     output = []
-    for node in elem:
+    for node in tree.iter():
         for i in attrs.keys():
-            if node.attrib[i] == attrs[i]:
-                output.append(node.text)
+            if node.attrib.__contains__(i) and node.attrib[i] == attrs[i]:
+                output.append(node.tag)
                 break
     return list(set(output))
 
@@ -108,10 +106,11 @@ def ex8(path, regular_expression):
 
 
 if __name__ == '__main__':
-    # print(ex1('Un text oarecare'))
+    print(ex1('Un text, oarecare, .'))
     # print(ex2('\w+' , 'Ceva altceva nu stiu buba', 4))
     # print(ex3('Un text oarecare 0745075496 0745075496', ["07[0-9]"]))
-    print(ex4())
+    # print(ex4('C:\\Users\\Cosmin\\PycharmProjects\\PythonLab6\\test.xml', {'camp_unu' : 'Ceva', 'camp_doi' : 'Altceva'}))
+    # print(ex5('C:\\Users\\Cosmin\\PycharmProjects\\PythonLab6\\test.xml', {'camp_unu': 'Ceva', 'camp_doi': 'Altceva'}))
     # print(ex6('unu doi trei patru altceva ceva apt'))
     # print(ex7('1270632341710'))
     # print(ex7('1270623341710'))

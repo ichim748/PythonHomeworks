@@ -11,9 +11,11 @@ background = pygame.image.load('background_photo.jpg')
 
 
 class Tile(pygame.sprite.Sprite):
-    def __init__(self, tip, x, y):
+    def __init__(self, tip, x, y, i, j):
         super().__init__()
         self.tip = tip
+        self.i = i
+        self.j = j
         self.sprites = []
         self.sprites.append(pygame.image.load('default_tile.png'))
         self.sprites.append(pygame.image.load('on_hover_tile.png'))
@@ -64,13 +66,40 @@ def grid_position_to_coordinates(x, y):
 
 
 tile_group = pygame.sprite.Group()
+tile_matrix = []
 
 for i in range(11):
+    temp = []
     for j in range(11):
         coordinates = grid_position_to_coordinates(i, j)
-        tile_group.add(Tile(0, coordinates[0], coordinates[1]))
+        if i == 5 and j == 5:
+            mouse_position = (i, j)
+            tile = Tile(3, coordinates[0], coordinates[1], i, j)
+            tile_group.add(tile)
+            temp.append(tile)
+        else:
+            tile = Tile(0, coordinates[0], coordinates[1], i, j)
+            tile_group.add(tile)
+            temp.append(tile)
+    tile_matrix.append(temp)
 
-while True:
+
+def mouse_won():
+    return mouse_position[0] == 0 or mouse_position[0] == 10 or mouse_position[1] == 0 or mouse_position[1] == 10
+
+
+def player_won():
+    if 0 < mouse_position[0] < 10 and 0 < mouse_position[1] < 10:
+        if tile_matrix[mouse_position[0]][mouse_position[1]-1].tip == 2 \
+                and tile_matrix[mouse_position[0]-1][mouse_position[1]].tip == 2 \
+                and tile_matrix[mouse_position[0]+1][mouse_position[1]].tip == 2 \
+                and tile_matrix[mouse_position[0]-1][mouse_position[1]+1].tip == 2 \
+                and tile_matrix[mouse_position[0]+1][mouse_position[1]+1].tip == 2 \
+                and tile_matrix[mouse_position[0]][mouse_position[1]+1].tip == 2:
+            return True
+
+
+while not mouse_won() and not player_won():
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
             pygame.quit()

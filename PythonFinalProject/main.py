@@ -90,6 +90,15 @@ for i in range(11):
             tile_group.add(tile)
             temp.append(tile)
     tile_matrix.append(temp)
+# Dupa ce am generat tabla trebuie sa adaugam niste blocked tiles (asa era in jocul original)
+number = random.randint(5, 10)
+impossible_positions = [(5, 5)]
+for i in range(number):
+    optiune_x = random.randint(0, 10)
+    optiune_y = random.randint(0, 10)
+    if (optiune_x, optiune_y) not in impossible_positions:
+        impossible_positions.append((optiune_x, optiune_y))
+        tile_matrix[optiune_x][optiune_y].tip = 2
 
 
 def mouse_won():
@@ -98,11 +107,18 @@ def mouse_won():
 
 def player_won():
     if 0 < mouse_position[0] < 10 and 0 < mouse_position[1] < 10:
-        if tile_matrix[mouse_position[0]][mouse_position[1]-1].tip == 2 \
+        if mouse_position[0] % 2 == 1 and tile_matrix[mouse_position[0]][mouse_position[1]-1].tip == 2 \
                 and tile_matrix[mouse_position[0]-1][mouse_position[1]].tip == 2 \
                 and tile_matrix[mouse_position[0]+1][mouse_position[1]].tip == 2 \
                 and tile_matrix[mouse_position[0]-1][mouse_position[1]+1].tip == 2 \
                 and tile_matrix[mouse_position[0]+1][mouse_position[1]+1].tip == 2 \
+                and tile_matrix[mouse_position[0]][mouse_position[1]+1].tip == 2:
+            return True
+        if mouse_position[0] % 2 == 0 and tile_matrix[mouse_position[0]][mouse_position[1]-1].tip == 2 \
+                and tile_matrix[mouse_position[0]-1][mouse_position[1]].tip == 2 \
+                and tile_matrix[mouse_position[0]+1][mouse_position[1]].tip == 2 \
+                and tile_matrix[mouse_position[0]+1][mouse_position[1]-1].tip == 2 \
+                and tile_matrix[mouse_position[0]-1][mouse_position[1]-1].tip == 2 \
                 and tile_matrix[mouse_position[0]][mouse_position[1]+1].tip == 2:
             return True
 

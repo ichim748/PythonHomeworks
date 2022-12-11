@@ -112,7 +112,15 @@ def mouse_move():
     while not found:
         optiune_x = random.randint(-1, 1)
         optiune_y = random.randint(-1, 1)
-        if (optiune_x, optiune_y) in [(0, -1), (-1, 0), (1, 0), (0, 1)]:
+        if (optiune_x, optiune_y) in [(-1, 0), (0, -1), (1, 0), (-1, 1), (0, 1), (1, 1)] and mouse_position[0] % 2 == 1:
+            if tile_matrix[mouse_position[0]+optiune_x][mouse_position[1]+optiune_y].tip != 2:
+                if not found:
+                    found = True
+                    tile_matrix[mouse_position[0]][mouse_position[1]].tip = 0
+                    tile_matrix[mouse_position[0] + optiune_x][mouse_position[1] + optiune_y].tip = 3
+                    mouse_position[0] += optiune_x
+                    mouse_position[1] += optiune_y
+        elif (optiune_x, optiune_y) in [(-1, 0), (0, -1), (1, 0), (1, -1), (0, 1), (-1, -1)] and mouse_position[0] % 2 == 0:
             if tile_matrix[mouse_position[0]+optiune_x][mouse_position[1]+optiune_y].tip != 2:
                 if not found:
                     found = True

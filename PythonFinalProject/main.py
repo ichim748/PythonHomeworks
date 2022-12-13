@@ -305,6 +305,7 @@ if __name__ == '__main__':
                 pygame.display.update()
                 time.sleep(5)
                 pygame.quit()
+                print('The mouse won!')
                 sys.exit()
             else:
                 font = pygame.font.Font('freesansbold.ttf', 35)
@@ -317,6 +318,7 @@ if __name__ == '__main__':
                 pygame.display.update()
                 time.sleep(5)
                 pygame.quit()
+                print('You won!')
                 sys.exit()
     elif sys.argv[1] == 'human':
         turn = [0]
@@ -349,6 +351,7 @@ if __name__ == '__main__':
                 pygame.display.update()
                 time.sleep(5)
                 pygame.quit()
+                print('The mouse player won!')
                 sys.exit()
             else:
                 font = pygame.font.Font('freesansbold.ttf', 35)
@@ -359,4 +362,5 @@ if __name__ == '__main__':
                 pygame.display.update()
                 time.sleep(5)
                 pygame.quit()
+                print('The human player won!')
                 sys.exit()

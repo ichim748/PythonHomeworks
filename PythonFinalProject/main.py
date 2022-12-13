@@ -253,7 +253,7 @@ def mouse_move_using_dijkstra():
 
 
 if __name__ == '__main__':
-    if sys.argv[1] == 'easy' or sys.argv[1] == 'medium' or sys.argv[1] == 'hard':
+    if len(sys.argv) > 2 and sys.argv[1] == 'easy' or sys.argv[1] == 'medium' or sys.argv[1] == 'hard':
         while not mouse_won() and not player_won():
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
@@ -320,7 +320,7 @@ if __name__ == '__main__':
                 pygame.quit()
                 print('You won!')
                 sys.exit()
-    elif sys.argv[1] == 'human':
+    elif len(sys.argv) > 2 and sys.argv[1] == 'human':
         turn = [0]
         while not mouse_won() and not player_won():
             for event in pygame.event.get():

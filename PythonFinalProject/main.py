@@ -1,7 +1,5 @@
 import random
 import sys
-import time
-
 import pygame
 
 pygame.init()
@@ -146,30 +144,76 @@ def mouse_move():
                     mouse_position[1] += optiune_y
 
 
-while not mouse_won() and not player_won():
-    for event in pygame.event.get():
-        if event.type == pygame.QUIT:
-            pygame.quit()
-            sys.exit()
-        elif event.type == pygame.MOUSEBUTTONDOWN:
-            for i in tile_group:
-                i.check_click(event.pos)
-        elif event.type == pygame.MOUSEMOTION:
-            for i in tile_group:
-                i.check_hover(event.pos)
+def mouse_move_using_dijkstra():
+    unvisited_tiles = [j for i in tile_matrix for j in i if j.tip != 2]
+    shortest_path = {}
+    previous_node = {}
+    for i in unvisited_tiles:
+        shortest_path[i] = sys.maxsize
+    shortest_path[tile_matrix[mouse_position[0]][mouse_position[1]]] = 0
+    while unvisited_tiles:
+        current_min = None
+        for i in unvisited_tiles:
+            if current_min is None:
+                current_min = i
+            elif shortest_path[i] < shortest_path[current_min]:
+                current_min = i
 
-    if not player_won() and moved[0] and blocked_tiles[0] > mouse_moves[0]:
-        moved[0] = False
-        mouse_moves[0] += 1
-        mouse_move()
+        if current_min.i % 2 == 1:
+            neighbours_positions = [(-1, 0), (0, -1), (1, 0), (-1, 1), (0, 1), (1, 1)]
+        else:
+            neighbours_positions = [(-1, -1), (0, -1), (1, -1), (1, 0), (0, 1), (-1, 0)]
+        neighbours = [tile_matrix[current_min.i + t[0]][current_min.j + t[1]] for t in neighbours_positions if
+                      0 <= current_min.i + t[0] <= 10 and 0 <= current_min.j + t[1] <= 10 and
+                      tile_matrix[current_min.i + t[0]][current_min.j + t[1]].tip != 2]
+        for neighbour in neighbours:
+            val_curenta = shortest_path[current_min] + 1
+            if val_curenta < shortest_path[neighbour]:
+                shortest_path[neighbour] = val_curenta
+                previous_node[neighbour] = current_min
+        unvisited_tiles.remove(current_min)
+    costuri_margini = [t for t in shortest_path if t.i == 0 or t.j == 0 or t.i == 10 or t.j == 10]
+    cost_minim = shortest_path[costuri_margini[0]]
+    tile_cost_minim = costuri_margini[0]
+    for i in range(1, len(costuri_margini)):
+        if shortest_path[costuri_margini[i]] < cost_minim:
+            cost_minim = shortest_path[costuri_margini[i]]
+            tile_cost_minim = costuri_margini[i]
+    # recreate the path
+    path = [tile_cost_minim]
+    while not path.__contains__(tile_matrix[mouse_position[0]][mouse_position[1]]):
+        path.append(previous_node[path[len(path)-1]])
+    tile_matrix[mouse_position[0]][mouse_position[1]].tip = 0
+    tile_matrix[path[len(path)-2].i][path[len(path)-2].j].tip = 3
+    mouse_position[0] = path[len(path)-2].i
+    mouse_position[1] = path[len(path)-2].j
 
-    pygame.display.flip()
-    screen.blit(background, (0, 0))
-    tile_group.draw(screen)
-    tile_group.update()
-    clock.tick(60)
-else:
-    if mouse_won():
-        print('The mouse won')
+
+if __name__ == '__main__': 
+    while not mouse_won() and not player_won():
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                pygame.quit()
+                sys.exit()
+            elif event.type == pygame.MOUSEBUTTONDOWN:
+                for i in tile_group:
+                    i.check_click(event.pos)
+            elif event.type == pygame.MOUSEMOTION:
+                for i in tile_group:
+                    i.check_hover(event.pos)
+
+        if not player_won() and moved[0] and blocked_tiles[0] > mouse_moves[0]:
+            moved[0] = False
+            mouse_moves[0] += 1
+            mouse_move_using_dijkstra()
+
+        pygame.display.flip()
+        screen.blit(background, (0, 0))
+        tile_group.draw(screen)
+        tile_group.update()
+        clock.tick(60)
     else:
-        print('The player won')
+        if mouse_won():
+            print('The mouse won')
+        else:
+            print('The player won')

@@ -1,5 +1,7 @@
 import random
 import sys
+import time
+
 import pygame
 
 pygame.init()
@@ -291,9 +293,31 @@ if __name__ == '__main__':
             clock.tick(60)
         else:
             if mouse_won():
-                print('The mouse won')
+                font = pygame.font.Font('freesansbold.ttf', 35)
+                pygame.display.flip()
+                screen.blit(background, (0, 0))
+                text = font.render("Game Over!", True, (255, 0, 0))
+                screen.blit(text, (305, 232))
+                text = font.render("The mouse has won!", True, (255, 0, 0))
+                screen.blit(text, (240, 232+45))
+                text = font.render("Your score was " + str(score_value) + "!", True, (255, 0, 0))
+                screen.blit(text, (230, 232+45+45))
+                pygame.display.update()
+                time.sleep(5)
+                pygame.quit()
+                sys.exit()
             else:
-                print('The player won')
+                font = pygame.font.Font('freesansbold.ttf', 35)
+                pygame.display.flip()
+                screen.blit(background, (0, 0))
+                text = font.render("You Won!", True, (255, 0, 0))
+                screen.blit(text, (315, 232))
+                text = font.render("Your score was " + str(score_value) + "!", True, (255, 0, 0))
+                screen.blit(text, (210, 232 + 45))
+                pygame.display.update()
+                time.sleep(5)
+                pygame.quit()
+                sys.exit()
     elif sys.argv[1] == 'human':
         turn = [0]
         while not mouse_won() and not player_won():
@@ -317,6 +341,22 @@ if __name__ == '__main__':
             clock.tick(60)
         else:
             if mouse_won():
-                print('The mouse player won')
+                font = pygame.font.Font('freesansbold.ttf', 35)
+                pygame.display.flip()
+                screen.blit(background, (0, 0))
+                text = font.render("The mouse player won!", True, (255, 0, 0))
+                screen.blit(text, (210, 232 + 45))
+                pygame.display.update()
+                time.sleep(5)
+                pygame.quit()
+                sys.exit()
             else:
-                print('The human player won')
+                font = pygame.font.Font('freesansbold.ttf', 35)
+                pygame.display.flip()
+                screen.blit(background, (0, 0))
+                text = font.render("The human player won!", True, (255, 0, 0))
+                screen.blit(text, (210, 232 + 45))
+                pygame.display.update()
+                time.sleep(5)
+                pygame.quit()
+                sys.exit()

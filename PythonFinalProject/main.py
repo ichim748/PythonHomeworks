@@ -364,3 +364,5 @@ if __name__ == '__main__':
                 pygame.quit()
                 print('The human player won!')
                 sys.exit()
+    else:
+        print("The argument you provided (" + sys.argv[1] + ") is not a valid argument for this application. Please try one of the following:\n-easy\n-mediu\n-hard\n-human")

@@ -13,6 +13,19 @@ moved = [False]
 blocked_tiles = [0]
 mouse_moves = [0]
 
+# score
+score_value = 20000
+font = pygame.font.Font('freesansbold.ttf', 25)
+textX = 10
+textY = 10
+
+
+def show_score():
+    score = font.render("Score : ", True, (255, 0, 0))
+    screen.blit(score, (textX, textY))
+    score = font.render(str(score_value), True, (255, 0, 0))
+    screen.blit(score, (textX, textY + 25))
+
 
 class Tile(pygame.sprite.Sprite):
     def __init__(self, tip, x, y, i, j):
@@ -51,6 +64,8 @@ class Tile(pygame.sprite.Sprite):
             self.tip = 2
             moved[0] = True
             blocked_tiles[0] += 1
+            return True
+        return False
 
     def check_click_with_turn(self, mouse, turn, tiles):
         if turn[0] == 0:
@@ -59,6 +74,8 @@ class Tile(pygame.sprite.Sprite):
                 moved[0] = True
                 blocked_tiles[0] += 1
                 turn[0] = 1
+                return True
+            return False
         else:
             if self.rect.collidepoint(mouse) and (self.tip == 0 or self.tip == 1):
                 if mouse_position[0] % 2 == 1:
@@ -73,6 +90,8 @@ class Tile(pygame.sprite.Sprite):
                         mouse_position[1] = self.j
                         break
                 turn[0] = 0
+                return True
+            return False
 
     def check_hover(self, mouse):
         if self.rect.collidepoint(mouse):
@@ -240,7 +259,9 @@ if __name__ == '__main__':
                     sys.exit()
                 elif event.type == pygame.MOUSEBUTTONDOWN:
                     for i in tile_group:
-                        i.check_click(event.pos)
+                        if i.check_click(event.pos):
+                            score_value -= 50
+                            break
                 elif event.type == pygame.MOUSEMOTION:
                     for i in tile_group:
                         i.check_hover(event.pos)
@@ -264,6 +285,7 @@ if __name__ == '__main__':
 
             pygame.display.flip()
             screen.blit(background, (0, 0))
+            show_score()
             tile_group.draw(screen)
             tile_group.update()
             clock.tick(60)
@@ -281,12 +303,15 @@ if __name__ == '__main__':
                     sys.exit()
                 elif event.type == pygame.MOUSEBUTTONDOWN:
                     for i in tile_group:
-                        i.check_click_with_turn(event.pos, turn, tile_matrix)
+                        if i.check_click_with_turn(event.pos, turn, tile_matrix):
+                            score_value -= 50
+                            break
                 elif event.type == pygame.MOUSEMOTION:
                     for i in tile_group:
                         i.check_hover_with_turn(event.pos, turn)
             pygame.display.flip()
             screen.blit(background, (0, 0))
+            show_score()
             tile_group.draw(screen)
             tile_group.update()
             clock.tick(60)

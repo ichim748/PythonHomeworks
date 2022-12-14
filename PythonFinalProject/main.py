@@ -1,21 +1,24 @@
 import random
 import sys
 import time
-
 import pygame
 
+# Initialize the screen
 pygame.init()
 clock = pygame.time.Clock()
 screen_width = 800
 screen_height = 600
 screen = pygame.display.set_mode((screen_width, screen_height))
 
+# background holds the image necessary for background use
 background = pygame.image.load('background_photo.jpg')
+
+# Control variables for determining whether it's the computers turn or not
 moved = [False]
 blocked_tiles = [0]
 mouse_moves = [0]
 
-# score
+# Initialize the numerical value for the score, it's font, and it's location
 score_value = 20000
 font = pygame.font.Font('freesansbold.ttf', 25)
 textX = 10
@@ -23,6 +26,9 @@ textY = 10
 
 
 def show_score():
+    """
+    Writes the message "Score : value" on the screen. value is the current score of the player.
+    """
     score = font.render("Score : ", True, (255, 0, 0))
     screen.blit(score, (textX, textY))
     score = font.render(str(score_value), True, (255, 0, 0))
@@ -30,6 +36,14 @@ def show_score():
 
 
 class Tile(pygame.sprite.Sprite):
+    """
+    Holds information about a certain tile from the board.
+    x - the x coordinate of the center of the rect.
+    y - the y coordinate of the center of the rect.
+    tip - the type of tile that it is (free, blocked, hovered-over, with the mouse).
+    i - the row inside the tile_matrix
+    j - the column inside the tile_matrix
+    """
     def __init__(self, tip, x, y, i, j):
         super().__init__()
         self.tip = tip
@@ -52,6 +66,9 @@ class Tile(pygame.sprite.Sprite):
         self.rect.center = [x, y]
 
     def update(self):
+        """
+        Function meant to update the image of the tile based on it's type
+        """
         if self.tip == 0:
             self.image = self.sprites[0]
         elif self.tip == 1:
@@ -62,6 +79,10 @@ class Tile(pygame.sprite.Sprite):
             self.image = self.sprites[3]
 
     def check_click(self, mouse):
+        """
+        Change the type of the tile if a click happened on it and if it's clickable.
+        :param mouse: The coordinates of the mouse click
+        """
         if self.rect.collidepoint(mouse) and (self.tip == 0 or self.tip == 1):
             self.tip = 2
             moved[0] = True
@@ -70,6 +91,13 @@ class Tile(pygame.sprite.Sprite):
         return False
 
     def check_click_with_turn(self, mouse, turn, tiles):
+        """
+        Change the type of the tile if a click happened on it and if it's clickable. This function is meant to
+        differentiate between two human players.
+        :param mouse: The coordinates of the mouse click
+        :param turn: A control variable determining whose turn is
+        :param tiles: The tile matrix
+        """
         if turn[0] == 0:
             if self.rect.collidepoint(mouse) and (self.tip == 0 or self.tip == 1):
                 self.tip = 2
@@ -96,6 +124,10 @@ class Tile(pygame.sprite.Sprite):
             return False
 
     def check_hover(self, mouse):
+        """
+        Change the type of the tile if the hover action happened above this tile.
+        :param mouse: The coordinates of the mouse click
+        """
         if self.rect.collidepoint(mouse):
             if self.tip == 0 or self.tip == 1:
                 self.tip = 1
@@ -103,6 +135,11 @@ class Tile(pygame.sprite.Sprite):
             self.tip = 0
 
     def check_hover_with_turn(self, mouse, rand):
+        """
+        Check if the tile is a valid moved for the current player, and if it is, highlight that tile.
+        :param mouse: The coordinates of the mouse click
+        :param rand: A control variable determining whose turn is
+        """
         if rand[0] == 0:
             if self.rect.collidepoint(mouse):
                 if self.tip == 0 or self.tip == 1:
@@ -123,6 +160,12 @@ class Tile(pygame.sprite.Sprite):
 
 
 def grid_position_to_coordinates(x, y):
+    """
+    Return the position inside the tile matrix based on the coordinates.
+    :param x: the x coordinate of the tile
+    :param y: the y coordinate of the tile
+    :return: tuple - (A, B), where A is the line of the tile and B is the column of the tile
+    """
     if x % 2 == 0:
         a = 173 + y * 56
         b = 27 + x * 53
@@ -133,9 +176,9 @@ def grid_position_to_coordinates(x, y):
         return a, b
 
 
+# Initialize the tile group and the tile matrix necessary
 tile_group = pygame.sprite.Group()
 tile_matrix = []
-
 for i in range(11):
     temp = []
     for j in range(11):
@@ -151,7 +194,7 @@ for i in range(11):
             temp.append(tile)
     tile_matrix.append(temp)
 
-# Dupa ce am generat tabla trebuie sa adaugam niste blocked tiles (asa era in jocul original)
+# The addition of some blocked tiles from the beginning
 number = random.randint(5, 10)
 impossible_positions = [(5, 5)]
 for i in range(number):
@@ -163,10 +206,18 @@ for i in range(number):
 
 
 def mouse_won():
+    """
+    Checks if the mouse won the game.
+    :return: boolean value for whether the mouse has won the game
+    """
     return mouse_position[0] == 0 or mouse_position[0] == 10 or mouse_position[1] == 0 or mouse_position[1] == 10
 
 
 def player_won():
+    """
+    Checks if the player won the game.
+    :return: boolean value for whether the player has won the game
+    """
     if 0 < mouse_position[0] < 10 and 0 < mouse_position[1] < 10:
         if mouse_position[0] % 2 == 1 and tile_matrix[mouse_position[0]][mouse_position[1]-1].tip == 2 \
                 and tile_matrix[mouse_position[0]-1][mouse_position[1]].tip == 2 \
@@ -185,29 +236,37 @@ def player_won():
 
 
 def mouse_move():
+    """
+    Function that moves the mouse on a random, possible tile.
+    """
     found = False
     while not found:
         optiune_x = random.randint(-1, 1)
         optiune_y = random.randint(-1, 1)
-        if (optiune_x, optiune_y) in [(-1, 0), (0, -1), (1, 0), (-1, 1), (0, 1), (1, 1)] and mouse_position[0] % 2 == 1:
-            if tile_matrix[mouse_position[0]+optiune_x][mouse_position[1]+optiune_y].tip != 2:
-                if not found:
-                    found = True
-                    tile_matrix[mouse_position[0]][mouse_position[1]].tip = 0
-                    tile_matrix[mouse_position[0] + optiune_x][mouse_position[1] + optiune_y].tip = 3
-                    mouse_position[0] += optiune_x
-                    mouse_position[1] += optiune_y
-        elif (optiune_x, optiune_y) in [(-1, 0), (0, -1), (1, 0), (1, -1), (0, 1), (-1, -1)] and mouse_position[0] % 2 == 0:
-            if tile_matrix[mouse_position[0]+optiune_x][mouse_position[1]+optiune_y].tip != 2:
-                if not found:
-                    found = True
-                    tile_matrix[mouse_position[0]][mouse_position[1]].tip = 0
-                    tile_matrix[mouse_position[0] + optiune_x][mouse_position[1] + optiune_y].tip = 3
-                    mouse_position[0] += optiune_x
-                    mouse_position[1] += optiune_y
+        if (optiune_x, optiune_y) in [(-1, 0), (0, -1), (1, 0), (-1, 1), (0, 1), (1, 1)] \
+                and mouse_position[0] % 2 == 1 \
+                and tile_matrix[mouse_position[0]+optiune_x][mouse_position[1]+optiune_y].tip != 2 \
+                and not found:
+            found = True
+            tile_matrix[mouse_position[0]][mouse_position[1]].tip = 0
+            tile_matrix[mouse_position[0] + optiune_x][mouse_position[1] + optiune_y].tip = 3
+            mouse_position[0] += optiune_x
+            mouse_position[1] += optiune_y
+        elif (optiune_x, optiune_y) in [(-1, 0), (0, -1), (1, 0), (1, -1), (0, 1), (-1, -1)] \
+                and mouse_position[0] % 2 == 0 \
+                and tile_matrix[mouse_position[0]+optiune_x][mouse_position[1]+optiune_y].tip != 2 \
+                and not found:
+            found = True
+            tile_matrix[mouse_position[0]][mouse_position[1]].tip = 0
+            tile_matrix[mouse_position[0] + optiune_x][mouse_position[1] + optiune_y].tip = 3
+            mouse_position[0] += optiune_x
+            mouse_position[1] += optiune_y
 
 
 def mouse_move_using_dijkstra():
+    """
+    Function that moves the mouse taking into consideration the closest winning tile and the path towards it.
+    """
     unvisited_tiles = [j for i in tile_matrix for j in i if j.tip != 2]
     shortest_path = {}
     previous_node = {}
@@ -253,7 +312,8 @@ def mouse_move_using_dijkstra():
 
 
 if __name__ == '__main__':
-    if len(sys.argv) > 2 and sys.argv[1] == 'easy' or sys.argv[1] == 'medium' or sys.argv[1] == 'hard':
+    # Checks if we have gotten one of the computer difficulty expected command line arguments.
+    if len(sys.argv) >= 2 and (sys.argv[1] == 'easy' or sys.argv[1] == 'medium' or sys.argv[1] == 'hard'):
         while not mouse_won() and not player_won():
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
@@ -268,6 +328,10 @@ if __name__ == '__main__':
                     for i in tile_group:
                         i.check_hover(event.pos)
             contor = 0
+            """
+            Based on whether the game has ended and the difficulty chosen by the user, call the necessary 
+            function for the mouse move.
+            """
             if not player_won() and moved[0] and blocked_tiles[0] > mouse_moves[0] and sys.argv[1] == 'hard':
                 moved[0] = False
                 mouse_moves[0] += 1
@@ -279,12 +343,15 @@ if __name__ == '__main__':
             elif not player_won() and moved[0] and blocked_tiles[0] > mouse_moves[0] and sys.argv[1] == 'medium':
                 moved[0] = False
                 mouse_moves[0] += 1
-                if contor % 2 == 1:
+                if contor < 1:
                     mouse_move_using_dijkstra()
-                else:
+                    contor += 1
+                elif contor < 4:
                     mouse_move()
-                contor += 1
-
+                    contor += 1
+                else:
+                    contor = 0
+            # Update the image on the screen based on the current state of the tile group
             pygame.display.flip()
             screen.blit(background, (0, 0))
             show_score()
@@ -292,6 +359,7 @@ if __name__ == '__main__':
             tile_group.update()
             clock.tick(60)
         else:
+            # If the mouse won, show the appropriate message and end the game
             if mouse_won():
                 font = pygame.font.Font('freesansbold.ttf', 35)
                 pygame.display.flip()
@@ -307,6 +375,7 @@ if __name__ == '__main__':
                 pygame.quit()
                 print('The mouse won!')
                 sys.exit()
+            # If the player won, show the appropriate message and end the game
             else:
                 font = pygame.font.Font('freesansbold.ttf', 35)
                 pygame.display.flip()
@@ -320,7 +389,9 @@ if __name__ == '__main__':
                 pygame.quit()
                 print('You won!')
                 sys.exit()
-    elif len(sys.argv) > 2 and sys.argv[1] == 'human':
+
+    # Checks if we have gotten the expected command line arguments for playing human vs. human.
+    elif len(sys.argv) > 1 and sys.argv[1] == 'human':
         turn = [0]
         while not mouse_won() and not player_won():
             for event in pygame.event.get():
@@ -342,6 +413,7 @@ if __name__ == '__main__':
             tile_group.update()
             clock.tick(60)
         else:
+            # If the mouse player won, show the appropriate message and end the game
             if mouse_won():
                 font = pygame.font.Font('freesansbold.ttf', 35)
                 pygame.display.flip()
@@ -353,6 +425,7 @@ if __name__ == '__main__':
                 pygame.quit()
                 print('The mouse player won!')
                 sys.exit()
+            # If the human player won (mouse catching player), show the appropriate message and end the game
             else:
                 font = pygame.font.Font('freesansbold.ttf', 35)
                 pygame.display.flip()
@@ -365,4 +438,11 @@ if __name__ == '__main__':
                 print('The human player won!')
                 sys.exit()
     else:
-        print("The argument you provided (" + sys.argv[1] + ") is not a valid argument for this application. Please try one of the following:\n-easy\n-mediu\n-hard\n-human")
+        # If we received any other command line arguments other than the expected ones.
+        if len(sys.argv) >= 2:
+            print("The argument you provided ("
+                + sys.argv[1]
+                + ") is not a valid argument for this application. "
+                + "Please try one of the following:\n-easy\n-mediu\n-hard\n-human")
+        else:
+            print("Please try one of the following command line arguments:\n-easy\n-mediu\n-hard\n-human")

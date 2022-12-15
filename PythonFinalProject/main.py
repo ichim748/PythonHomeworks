@@ -391,7 +391,7 @@ if __name__ == '__main__':
                 sys.exit()
 
     # Checks if we have gotten the expected command line arguments for playing human vs. human.
-    elif len(sys.argv) > 1 and sys.argv[1] == 'human':
+    elif len(sys.argv) >= 2 and sys.argv[1] == 'human':
         turn = [0]
         while not mouse_won() and not player_won():
             for event in pygame.event.get():
